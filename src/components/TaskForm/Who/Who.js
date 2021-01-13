@@ -1,5 +1,6 @@
-import React, { Fragment } from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
+import uniqid from 'uniqid';
 
 import {Avatar} from 'antd';
 import {LeftOutlined, RightOutlined} from '@ant-design/icons';
@@ -12,6 +13,8 @@ import Avatar3 from '../../../assets/avatar3.png'
 import Avatar4 from '../../../assets/avatar4.png'
 
 export const Who = () => {
+  const [selectedWho, setSelectedWho] = useState(1);
+
   const completeWhoList = [
     {
       idx: 1,
@@ -55,35 +58,79 @@ export const Who = () => {
     align-items: center;
     justify-content: center;
     display: flex;
+    cursor: pointer;
   `;
 
   const AvatarArea = styled.div`
     width: 80%;
-
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
   `;
 
+  const getAvatarStyle = (avatarIndex) => {
+    if (avatarIndex === selectedWho) {
+      return {
+        border: '5px solid #5BF326',
+        boxSizing: 'border-box',
+        cursor: 'pointer',
+        height: 'calc(3rem + 5px)',
+        width: 'calc(3rem + 5px)',
+        margin: '0 0.3rem'
+      }
+    }
+
+    return {
+      height: '3rem',
+      width: '3rem',
+      margin: '0 0.3rem',
+      cursor: 'pointer',
+    }
+  }
+
   const generateAvatars = () => {
-    return completeWhoList.map((item) => {
-      return <Avatar icon={
-        <img src={item.avatarSource} alt={`Avatar ${item.idx}`}/>
-      }/>
+    return completeWhoList.map((item, index) => {
+      return <Avatar
+        key={uniqid()}
+        style={getAvatarStyle(item.idx)}
+        onClick={() => {setSelectedWho(item.idx)}}
+        icon={
+          <img src={item.avatarSource} alt={`Avatar ${item.idx}`}/>
+        }/>
     });
   }
+
+  const onClickLeft = () => {
+    if (selectedWho === 1) {
+      return setSelectedWho(4);
+    }
+
+    setSelectedWho(selectedWho - 1);
+  }
+
+  const onClickRight = () => {
+    if (selectedWho === 4) {
+      return setSelectedWho(1);
+    }
+
+    setSelectedWho(selectedWho + 1);
+  }
+
 
   return <FormItem>
     <WhoLabel>Who</WhoLabel>
 
     <WhoSelectionArea>
 
-      <SelectToTheLeftOrRight>
+      <SelectToTheLeftOrRight onClick={onClickLeft}>
         <LeftOutlined />
       </SelectToTheLeftOrRight>
       
       <AvatarArea>
-        {generateAvatars()};
+        {generateAvatars()}
       </AvatarArea>
 
-      <SelectToTheLeftOrRight>
+      <SelectToTheLeftOrRight onClick={onClickRight}>
         <RightOutlined />
       </SelectToTheLeftOrRight>
 
